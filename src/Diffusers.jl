@@ -1,7 +1,14 @@
 module Diffusers
 
-include("scheduler.jl")
-include("beta_scheduler.jl")
-include("ddpm.jl")
+# utils
+include("Embeddings.jl")
+include("ConditionalChain.jl")
+
+# abtract types
+include("Schedulers.jl")
+include("BetaSchedulers.jl")
+
+# concrete types
+include("DDPM.jl")
 
 end # module Diffusers

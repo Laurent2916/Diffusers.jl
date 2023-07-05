@@ -1,4 +1,4 @@
-include("scheduler.jl")
+include("Schedulers.jl")
 
 """
 Denoising Diffusion Probabilistic Models (DDPM) scheduler.
