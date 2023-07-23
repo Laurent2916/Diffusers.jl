@@ -1,5 +1,5 @@
 {
   "julia.useRevise": true,
   "julia.persistentSession.enabled": true,
-  "editor.unicodeHighlight.ambiguousCharacters": false
+  "editor.unicodeHighlight.ambiguousCharacters": false,
 }
