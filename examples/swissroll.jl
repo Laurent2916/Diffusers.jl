@@ -2,6 +2,7 @@ import Diffusers
 using Flux
 using Random
 using Plots
+using ProgressMeter
 
 function make_spiral(rng::AbstractRNG, n_samples::Int=1000)
   t_min = 1.5π
@@ -42,7 +43,7 @@ scheduler = Diffusers.DDPM(
 
 noise = randn(size(data))
 
-anim = @animate for i in cat(collect(1:num_timesteps), repeat([num_timesteps], 50), dims=1)
+anim = @animate for i in cat(1:num_timesteps, repeat([num_timesteps], 50), dims=1)
   noisy_data = Diffusers.add_noise(scheduler, data, noise, [i])
   scatter(noise[1, :], noise[2, :],
     alpha=0.1,
@@ -99,21 +100,45 @@ model = Diffusers.ConditionalChain(
 
 model(data, [100])
 
-
-num_epochs = 10
+num_epochs = 100
 loss = Flux.Losses.mse
-dataloader = Flux.DataLoader(X |> to_device; batchsize=32, shuffle=true);
+opt = Flux.setup(Adam(0.0001), model)
+dataloader = Flux.DataLoader(data |> cpu; batchsize=32, shuffle=true);
+progress = Progress(num_epochs; desc="training", showspeed=true)
 for epoch = 1:num_epochs
-  progress = Progress(length(data); desc="epoch $epoch/$num_epochs")
   params = Flux.params(model)
   for data in dataloader
+    noise = randn(size(data))
+    timesteps = rand(2:num_timesteps, size(data)[2]) # TODO: fix start at timestep=2, bruh
+    noisy_data = Diffusers.add_noise(scheduler, data, noise, timesteps)
     grads = Flux.gradient(model) do m
-      model_output = m(data)
-      noise_prediction = Diffusers.step(model_output, timesteps, scheduler)
+      model_output = m(noisy_data, timesteps)
+      noise_prediction = Diffusers.step(scheduler, noisy_data, model_output, timesteps)
       loss(noise, noise_prediction)
     end
     Flux.update!(opt, params, grads)
-    ProgressMeter.next!(progress; showvalues=[("batch loss", @sprintf("%.5f", batch_loss))])
   end
+  ProgressMeter.next!(progress)
 end
 
+# sampling animation
+anim = @animate for timestep in num_timesteps:-1:2
+  model_output = model(data, [timestep])
+  sampled_data = Diffusers.step(scheduler, data, model_output, [timestep])
+  scatter(sampled_data[1, :], sampled_data[2, :],
+    alpha=0.5,
+    aspectratio=:equal,
+    label="sampled data",
+  )
+  scatter!(data[1, :], data[2, :],
+    alpha=0.5,
+    aspectratio=:equal,
+    label="data",
+  )
+  i_str = lpad(timestep, 3, "0")
+  title!("t = $(i_str)")
+  xlims!(-3, 3)
+  ylims!(-3, 3)
+end
+
+gif(anim, "sampling.gif", fps=30)
