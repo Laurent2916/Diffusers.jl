@@ -4,6 +4,10 @@ using Random
 using Plots
 using ProgressMeter
 
+# utils
+include("Embeddings.jl")
+include("ConditionalChain.jl")
+
 function make_spiral(rng::AbstractRNG, n_samples::Int=1000)
   t_min = 1.5π
   t_max = 4.5π
@@ -70,12 +74,12 @@ end
 gif(anim, "swissroll.gif", fps=50)
 
 d_hid = 32
-model = Diffusers.ConditionalChain(
+model = ConditionalChain(
   Parallel(
     .+,
     Dense(2, d_hid),
     Chain(
-      Diffusers.SinusoidalPositionEmbedding(num_timesteps, d_hid),
+      SinusoidalPositionEmbedding(num_timesteps, d_hid),
       Dense(d_hid, d_hid))
   ),
   relu,
@@ -83,7 +87,7 @@ model = Diffusers.ConditionalChain(
     .+,
     Dense(d_hid, d_hid),
     Chain(
-      Diffusers.SinusoidalPositionEmbedding(num_timesteps, d_hid),
+      SinusoidalPositionEmbedding(num_timesteps, d_hid),
       Dense(d_hid, d_hid))
   ),
   relu,
@@ -91,7 +95,7 @@ model = Diffusers.ConditionalChain(
     .+,
     Dense(d_hid, d_hid),
     Chain(
-      Diffusers.SinusoidalPositionEmbedding(num_timesteps, d_hid),
+      SinusoidalPositionEmbedding(num_timesteps, d_hid),
       Dense(d_hid, d_hid))
   ),
   relu,
