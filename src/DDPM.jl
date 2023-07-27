@@ -38,24 +38,24 @@ function DDPM(V::DataType, βs::AbstractVector)
   )
 end
 
+"""
+Remove noise from model output using the backward diffusion process.
+
+Args:
+  scheduler (`DDPM`): scheduler object.
+  sample (`AbstractArray`): sample to remove noise from, i.e. model_input.
+  model_output (`AbstractArray`): predicted noise from the model.
+  timesteps (`AbstractArray`): timesteps to remove noise from.
+
+Returns:
+  `AbstractArray`: denoised model output at the given timestep.
+"""
 function step(
   scheduler::DDPM,
   sample::AbstractArray,
   model_output::AbstractArray,
   timesteps::AbstractArray,
 )
-  """
-  Remove noise from model output using the backward diffusion process.
-
-  Args:
-    scheduler (`Scheduler`): scheduler object.
-    sample (`AbstractArray`): sample to remove noise from, i.e. model_input.
-    model_output (`AbstractArray`): predicted noise from the model.
-    timesteps (`AbstractArray`): timesteps to remove noise from.
-
-  Returns:
-    `AbstractArray`: denoised model output at the given timestep.
-  """
   # 1. compute alphas, betas
   α_cumprod_t = scheduler.α_cumprods[timesteps]
   α_cumprod_t_prev = scheduler.α_cumprods[timesteps.-1]

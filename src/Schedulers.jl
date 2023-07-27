@@ -4,7 +4,7 @@ abstract type Scheduler end
 Add noise to clean data using the forward diffusion process.
 
 ## Input
-  * scheduler (`Scheduler`): scheduler object.
+  * scheduler (`Scheduler`): scheduler to use.
   * clean_data (`AbstractArray`): clean data to add noise to.
   * noise (`AbstractArray`): noise to add to clean data.
   * timesteps (`AbstractArray`): timesteps used to weight the noise.
