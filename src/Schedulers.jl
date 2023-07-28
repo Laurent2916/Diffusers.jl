@@ -3,6 +3,8 @@ abstract type Scheduler end
 """
 Add noise to clean data using the forward diffusion process.
 
+cf. [[2006.11239] Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239) (Eq. 4)
+
 ## Input
   * scheduler (`Scheduler`): scheduler to use
   * clean_data (`AbstractArray`): clean data to add noise to
