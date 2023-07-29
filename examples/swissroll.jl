@@ -1,4 +1,6 @@
 import Diffusers
+import Diffusers.Schedulers
+import Diffusers.Schedulers: DDPM
 import Diffusers.BetaSchedules: cosine_beta_schedule, rescale_zero_terminal_snr
 using Flux
 using Random
@@ -41,7 +43,7 @@ scatter(data[1, :], data[2, :],
 )
 
 num_timesteps = 100
-scheduler = Diffusers.DDPM(
+scheduler = DDPM(
   Vector{Float64},
   rescale_zero_terminal_snr(
     cosine_beta_schedule(num_timesteps, 0.999f0, 0.001f0)
@@ -51,7 +53,7 @@ scheduler = Diffusers.DDPM(
 noise = randn(size(data))
 
 anim = @animate for i in cat(1:num_timesteps, repeat([num_timesteps], 50), dims=1)
-  noisy_data = Diffusers.add_noise(scheduler, data, noise, [i])
+  noisy_data = Diffusers.Schedulers.add_noise(scheduler, data, noise, [i])
   scatter(noise[1, :], noise[2, :],
     alpha=0.1,
     aspectratio=:equal,
@@ -117,10 +119,10 @@ for epoch = 1:num_epochs
   for data in dataloader
     noise = randn(size(data))
     timesteps = rand(2:num_timesteps, size(data)[2]) # TODO: fix start at timestep=2, bruh
-    noisy_data = Diffusers.add_noise(scheduler, data, noise, timesteps)
+    noisy_data = Diffusers.Schedulers.add_noise(scheduler, data, noise, timesteps)
     grads = Flux.gradient(model) do m
       model_output = m(noisy_data, timesteps)
-      noise_prediction, _ = Diffusers.step(scheduler, noisy_data, model_output, timesteps)
+      noise_prediction, _ = Diffusers.Schedulers.step(scheduler, noisy_data, model_output, timesteps)
       loss(noise, noise_prediction)
     end
     Flux.update!(opt, params, grads)
@@ -131,7 +133,7 @@ end
 # sampling animation
 anim = @animate for timestep in num_timesteps:-1:2
   model_output = model(data, [timestep])
-  sampled_data, x0_pred = Diffusers.step(scheduler, data, model_output, [timestep])
+  sampled_data, x0_pred = Diffusers.Schedulers.step(scheduler, data, model_output, [timestep])
 
   p1 = scatter(sampled_data[1, :], sampled_data[2, :],
     alpha=0.5,

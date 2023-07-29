@@ -1,3 +1,7 @@
+"""
+Abstract type for schedulers.
+
+"""
 abstract type Scheduler end
 
 """
@@ -69,7 +73,7 @@ end
 Add noise to clean data using the forward diffusion process.
 
 ## Input
-  * `scheduler::Scheduler`: scheduler to use
+  * `scheduler::DDPM`: scheduler to use
   * `x₀::AbstractArray`: clean data to add noise to
   * `ϵ::AbstractArray`: noise to add to clean data
   * `t::AbstractArray`: timesteps used to weight the noise
