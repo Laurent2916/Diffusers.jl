@@ -7,5 +7,5 @@
 
 ## Credits
 
-- @huggingface for their amazing [🤗 diffusers](https://github.com/huggingface/diffusers/) library.
-- @liorsinai for his [Denoising diffusion probabilistic models from first principles](https://liorsinai.github.io/coding/2022/12/03/denoising-diffusion-1-spiral.html) blog posts.
+- [@huggingface](https://github.com/huggingface) for their amazing [🤗 diffusers](https://github.com/huggingface/diffusers/) library.
+- [@liorsinai](https://github.com/liorsinai) for his [Denoising diffusion probabilistic models from first principles](https://liorsinai.github.io/coding/2022/12/03/denoising-diffusion-1-spiral.html) blog posts.
