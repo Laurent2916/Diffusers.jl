@@ -1,0 +1,3 @@
+```@autodocs
+Modules = [Diffusers.Schedulers]
+```

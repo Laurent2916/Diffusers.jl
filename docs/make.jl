@@ -16,5 +16,7 @@ makedocs(;
   ),
   pages=[
     "Home" => "index.md",
+    "Schedulers" => "schedulers.md",
+    "Beta Schedules" => "beta_schedules.md",
   ]
 )
