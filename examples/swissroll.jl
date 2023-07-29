@@ -8,7 +8,7 @@ using ProgressMeter
 include("Embeddings.jl")
 include("ConditionalChain.jl")
 
-function make_spiral(rng::AbstractRNG, n_samples::Int=1000)
+function make_spiral(rng::AbstractRNG, n_samples::Integer=1000)
   t_min = 1.5π
   t_max = 4.5π
 
@@ -20,7 +20,7 @@ function make_spiral(rng::AbstractRNG, n_samples::Int=1000)
   permutedims([x y], (2, 1))
 end
 
-make_spiral(n_samples::Int=1000) = make_spiral(Random.GLOBAL_RNG, n_samples)
+make_spiral(n_samples::Integer=1000) = make_spiral(Random.GLOBAL_RNG, n_samples)
 
 function normalize_zero_to_one(x)
   x_min, x_max = extrema(x)
@@ -42,7 +42,9 @@ scatter(data[1, :], data[2, :],
 num_timesteps = 100
 scheduler = Diffusers.DDPM(
   Vector{Float64},
-  Diffusers.cosine_beta_schedule(num_timesteps, 0.999f0, 0.001f0),
+  Diffusers.rescale_zero_terminal_snr(
+    Diffusers.cosine_beta_schedule(num_timesteps, 0.999f0, 0.001f0)
+  )
 )
 
 noise = randn(size(data))
@@ -104,7 +106,7 @@ model = ConditionalChain(
 
 model(data, [100])
 
-num_epochs = 1000
+num_epochs = 100
 loss = Flux.Losses.mse
 opt = Flux.setup(Adam(0.0001), model)
 dataloader = Flux.DataLoader(data |> cpu; batchsize=32, shuffle=true);

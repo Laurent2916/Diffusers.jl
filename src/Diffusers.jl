@@ -6,5 +6,6 @@ include("BetaSchedulers.jl")
 
 # concrete types
 include("DDPM.jl")
+# include("DDIM.jl")
 
 end # module Diffusers

@@ -7,12 +7,12 @@ end
 Flux.@functor SinusoidalPositionEmbedding
 Flux.trainable(emb::SinusoidalPositionEmbedding) = () # mark it as an non-trainable array
 
-function SinusoidalPositionEmbedding(in::Int, out::Int)
+function SinusoidalPositionEmbedding(in::Integer, out::Integer)
   W = make_positional_embedding(out, in)
   SinusoidalPositionEmbedding(W)
 end
 
-function make_positional_embedding(dim_embedding::Int, seq_length::Int=1000; n::Int=10000)
+function make_positional_embedding(dim_embedding::Integer, seq_length::Integer=1000; n::Integer=10000)
   embedding = Matrix{Float32}(undef, dim_embedding, seq_length)
   for pos in 1:seq_length
     for row in 0:2:(dim_embedding-1)

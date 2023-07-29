@@ -3,39 +3,65 @@ include("Schedulers.jl")
 """
 Denoising Diffusion Probabilistic Models (DDPM) scheduler.
 
-cf. [[2006.11239] Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239)
+## References
+  * [[2006.11239] Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239)
 """
 struct DDPM{V<:AbstractVector} <: Scheduler
-  # number of diffusion steps used to train the model.
-  T_train::Int
+  T::Integer # length of markov chain
 
-  # the betas used for the diffusion steps
-  β::V
+  β::V # beta variance schedule
+  α::V # 1 - beta
 
-  # internal variables used for computation (derived from β)
-  α::V
-  α_cumprods::V
-  α_cumprod_prevs::V
-  sqrt_α_cumprods::V
-  sqrt_one_minus_α_cumprods::V
+  ⎷α::V # square root of α
+  ⎷β::V # square root of β
+
+  α̅::V # cumulative product of α
+  β̅::V # 1 - α̅ (≠ cumprod(β))
+
+  α̅₋₁::V # right-shifted α̅
+  β̅₋₁::V # 1 - α̅₋₁
+
+  ⎷α̅::V # square root of α̅
+  ⎷β̅::V # square root of β̅
+
+  ⎷α̅₋₁::V # square root of α̅₋₁
+  ⎷β̅₋₁::V # square root of β̅₋₁
 end
 
 function DDPM(V::DataType, β::AbstractVector)
-  α = 1 .- β
-  α_cumprods = cumprod(α)
-  α_cumprod_prevs = [1, (α_cumprods[1:end-1])...]
+  T = length(β)
 
-  sqrt_α_cumprods = sqrt.(α_cumprods)
-  sqrt_one_minus_α_cumprods = sqrt.(1 .- α_cumprods)
+  α = 1 .- β
+
+  ⎷α = sqrt.(α)
+  ⎷β = sqrt.(β)
+
+  α̅ = cumprod(α)
+  β̅ = 1 .- α̅
+
+  α̅₋₁ = [1, (α̅[1:end-1])...]
+  β̅₋₁ = 1 .- α̅₋₁
+
+  ⎷α̅ = sqrt.(α̅)
+  ⎷β̅ = sqrt.(β̅)
+
+  ⎷α̅₋₁ = sqrt.(α̅₋₁)
+  ⎷β̅₋₁ = sqrt.(β̅₋₁)
 
   DDPM{V}(
-    length(β),
+    T,
     β,
     α,
-    α_cumprods,
-    α_cumprod_prevs,
-    sqrt_α_cumprods,
-    sqrt_one_minus_α_cumprods,
+    ⎷α,
+    ⎷β,
+    α̅,
+    β̅,
+    α̅₋₁,
+    β̅₋₁,
+    ⎷α̅,
+    ⎷β̅,
+    ⎷α̅₋₁,
+    ⎷β̅₋₁,
   )
 end
 
@@ -43,47 +69,47 @@ end
 Remove noise from model output using the backward diffusion process.
 
 ## Input
-  * scheduler (`DDPM`): scheduler to use
-  * sample (`AbstractArray`): sample to remove noise from, i.e. model_input
-  * model_output (`AbstractArray`): predicted noise from the model
-  * timesteps (`AbstractArray`): timesteps to remove noise from
+  * `scheduler::DDPM`: scheduler to use
+  * `xₜ::AbstractArray`: sample to be denoised
+  * `ϵᵧ::AbstractArray`: predicted noise to remove
+  * `t::AbstractArray`: timestep t of `xₜ`
 
 ## Output
-  * pred_prev_sample (`AbstractArray`): denoised sample at t=t-1
-  * x_0_pred (`AbstractArray`): denoised sample at t=0
+  * `xₜ₋₁::AbstractArray`: denoised sample at t=t-1
+  * `x̂₀::AbstractArray`: denoised sample at t=0
 """
 function step(
   scheduler::DDPM,
-  sample::AbstractArray,
-  model_output::AbstractArray,
-  timesteps::AbstractArray,
+  xₜ::AbstractArray,
+  ϵᵧ::AbstractArray,
+  t::AbstractArray,
 )
-  # 1. compute alphas, betas
-  α_cumprod_t = scheduler.α_cumprods[timesteps]
-  α_cumprod_t_prev = scheduler.α_cumprods[timesteps.-1]
-  β_cumprod_t = 1 .- α_cumprod_t
-  β_cumprod_t_prev = 1 .- α_cumprod_t_prev
-  current_α_t = α_cumprod_t ./ α_cumprod_t_prev
-  current_β_t = 1 .- current_α_t
+  # retreive scheduler variables at timesteps t
+  βₜ = scheduler.β[t]
+  β̅ₜ = scheduler.β̅[t]
+  β̅ₜ₋₁ = scheduler.β̅₋₁[t]
+  ⎷αₜ = scheduler.⎷α[t]
+  ⎷α̅ₜ = scheduler.⎷α̅[t]
+  ⎷α̅ₜ₋₁ = scheduler.⎷α̅₋₁[t]
+  ⎷β̅ₜ = scheduler.⎷β̅[t]
 
-  # 2. compute predicted original sample from predicted noise also called
-  # "predicted x_0" of formula (15) from https://arxiv.org/pdf/2006.11239.pdf
-  # epsilon prediction type
-  # print shapes of thingies
-  x_0_pred = (sample - sqrt.(β_cumprod_t)' .* model_output) ./ sqrt.(α_cumprod_t)'
+  # compute predicted previous sample x̂₀
+  # arxiv:2006.11239 Eq. 15
+  # arxiv:2208.11970 Eq. 115
+  x̂₀ = (xₜ - ⎷β̅ₜ' .* ϵᵧ) ./ ⎷α̅ₜ'
 
-  # 4. Compute coefficients for pred_original_sample x_0 and current sample x_t
-  # See formula (7) from https://arxiv.org/pdf/2006.11239.pdf
-  pred_original_sample_coeff = (sqrt.(α_cumprod_t_prev) .* current_β_t) ./ β_cumprod_t
-  current_sample_coeff = sqrt.(current_α_t) .* β_cumprod_t_prev ./ β_cumprod_t
+  # compute predicted previous sample μ̃ₜ
+  # arxiv:2006.11239 Eq. 7
+  # arxiv:2208.11970 Eq. 84
+  λ₀ = ⎷α̅ₜ₋₁ .* βₜ ./ β̅ₜ
+  λₜ = ⎷αₜ .* β̅ₜ₋₁ ./ β̅ₜ  # TODO: this could be stored in the scheduler
+  μ̃ₜ = λ₀' .* x̂₀ + λₜ' .* xₜ
 
-  # 5. Compute predicted previous sample µ_t
-  # See formula (7) from https://arxiv.org/pdf/2006.11239.pdf
-  pred_prev_sample = pred_original_sample_coeff' .* x_0_pred + current_sample_coeff' .* sample
+  # sample predicted previous sample xₜ₋₁
+  # arxiv:2006.11239 Eq. 6
+  # arxiv:2208.11970 Eq. 70
+  σₜ = β̅ₜ₋₁ ./ β̅ₜ .* βₜ # TODO: this could be stored in the scheduler
+  xₜ₋₁ = μ̃ₜ + σₜ' .* randn(size(ϵᵧ))
 
-  # 6. Add noise
-  variance = sqrt.(scheduler.β[timesteps])' .* randn(size(model_output))
-  pred_prev_sample = pred_prev_sample + variance
-
-  return pred_prev_sample, x_0_pred
+  return xₜ₋₁, x̂₀
 end

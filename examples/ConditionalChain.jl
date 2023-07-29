@@ -46,7 +46,7 @@ function Base.show(io::IO, c::ConditionalChain)
   print(io, ")")
 end
 
-function _big_show(io::IO, m::ConditionalChain{T}, indent::Int=0, name=nothing) where {T<:NamedTuple}
+function _big_show(io::IO, m::ConditionalChain{T}, indent::Integer=0, name=nothing) where {T<:NamedTuple}
   println(io, " "^indent, isnothing(name) ? "" : "$name = ", "ConditionalChain(")
   for k in Base.keys(m.layers)
     _big_show(io, m.layers[k], indent + 2, k)
