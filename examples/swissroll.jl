@@ -1,4 +1,5 @@
 import Diffusers
+import Diffusers.BetaSchedules: cosine_beta_schedule, rescale_zero_terminal_snr
 using Flux
 using Random
 using Plots
@@ -42,8 +43,8 @@ scatter(data[1, :], data[2, :],
 num_timesteps = 100
 scheduler = Diffusers.DDPM(
   Vector{Float64},
-  Diffusers.rescale_zero_terminal_snr(
-    Diffusers.cosine_beta_schedule(num_timesteps, 0.999f0, 0.001f0)
+  rescale_zero_terminal_snr(
+    cosine_beta_schedule(num_timesteps, 0.999f0, 0.001f0)
   )
 )
 

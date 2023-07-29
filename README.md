@@ -4,7 +4,6 @@
 
 [🤗 diffusers](https://github.com/huggingface/diffusers/), but in Julia (and with worse code) !
 
-
 ## Credits
 
 - [@huggingface](https://github.com/huggingface) for their amazing [🤗 diffusers](https://github.com/huggingface/diffusers/) library.
