@@ -87,12 +87,17 @@ function add_noise(
   ϵ::AbstractArray,
   t::AbstractArray,
 )
-  ⎷α̅ₜ = scheduler.⎷α̅[t]
-  ⎷β̅ₜ = scheduler.⎷β̅[t]
+  # retreive scheduler variables at timesteps t
+  reshape_size = tuple(
+    fill(1, ndims(x₀) - 1)...,
+    size(t, 1)
+  )
+  ⎷α̅ₜ = reshape(scheduler.⎷α̅[t], reshape_size)
+  ⎷β̅ₜ = reshape(scheduler.⎷β̅[t], reshape_size)
 
   # noisify clean data
   # arxiv:2006.11239 Eq. 4
-  xₜ = ⎷α̅ₜ' .* x₀ + ⎷β̅ₜ' .* ϵ
+  xₜ = ⎷α̅ₜ .* x₀ + ⎷β̅ₜ .* ϵ
 
   return xₜ
 end
@@ -117,31 +122,35 @@ function step(
   t::AbstractArray,
 )
   # retreive scheduler variables at timesteps t
-  βₜ = scheduler.β[t]
-  β̅ₜ = scheduler.β̅[t]
-  β̅ₜ₋₁ = scheduler.β̅₋₁[t]
-  ⎷αₜ = scheduler.⎷α[t]
-  ⎷α̅ₜ = scheduler.⎷α̅[t]
-  ⎷α̅ₜ₋₁ = scheduler.⎷α̅₋₁[t]
-  ⎷β̅ₜ = scheduler.⎷β̅[t]
+  reshape_size = tuple(
+    fill(1, ndims(xₜ) - 1)...,
+    size(t, 1)
+  )
+  βₜ = reshape(scheduler.β[t], reshape_size)
+  β̅ₜ = reshape(scheduler.β̅[t], reshape_size)
+  β̅ₜ₋₁ = reshape(scheduler.β̅₋₁[t], reshape_size)
+  ⎷αₜ = reshape(scheduler.⎷α[t], reshape_size)
+  ⎷α̅ₜ = reshape(scheduler.⎷α̅[t], reshape_size)
+  ⎷α̅ₜ₋₁ = reshape(scheduler.⎷α̅₋₁[t], reshape_size)
+  ⎷β̅ₜ = reshape(scheduler.⎷β̅[t], reshape_size)
 
   # compute predicted previous sample x̂₀
   # arxiv:2006.11239 Eq. 15
   # arxiv:2208.11970 Eq. 115
-  x̂₀ = (xₜ - ⎷β̅ₜ' .* ϵᵧ) ./ ⎷α̅ₜ'
+  x̂₀ = (xₜ - ⎷β̅ₜ .* ϵᵧ) ./ ⎷α̅ₜ
 
   # compute predicted previous sample μ̃ₜ
   # arxiv:2006.11239 Eq. 7
   # arxiv:2208.11970 Eq. 84
   λ₀ = ⎷α̅ₜ₋₁ .* βₜ ./ β̅ₜ
   λₜ = ⎷αₜ .* β̅ₜ₋₁ ./ β̅ₜ  # TODO: this could be stored in the scheduler
-  μ̃ₜ = λ₀' .* x̂₀ + λₜ' .* xₜ
+  μ̃ₜ = λ₀ .* x̂₀ + λₜ .* xₜ
 
   # sample predicted previous sample xₜ₋₁
   # arxiv:2006.11239 Eq. 6
   # arxiv:2208.11970 Eq. 70
   σₜ = β̅ₜ₋₁ ./ β̅ₜ .* βₜ # TODO: this could be stored in the scheduler
-  xₜ₋₁ = μ̃ₜ + σₜ' .* randn(size(ϵᵧ))
+  xₜ₋₁ = μ̃ₜ + σₜ .* randn(size(ϵᵧ))
 
   return xₜ₋₁, x̂₀
 end
