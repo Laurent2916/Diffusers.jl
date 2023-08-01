@@ -121,6 +121,7 @@ function step(
   # arxiv:2006.11239 Eq. 6
   # arxiv:2208.11970 Eq. 70
   σₜ = β̅ₜ₋₁ ./ β̅ₜ .* βₜ # TODO: this could be stored in the scheduler
+  σₜ = exp.(log.(σₜ) ./ 2) # https://github.com/huggingface/diffusers/blob/160474ac61934cc22793d6cebea118c171175dbc/src/diffusers/schedulers/scheduling_ddpm.py#L306
   xₜ₋₁ = μ̃ₜ + σₜ .* randn(size(ϵᵧ))
 
   return xₜ₋₁, x̂₀
