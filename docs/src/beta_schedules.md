@@ -95,8 +95,8 @@ nothing
 ```
 
 ```@raw html
-<object type="text/html" data="fig_beta_schedules.html" style="width:100%;height:420px;"></object>
-<object type="text/html" data="fig_alpha_bar_schedules.html" style="width:100%;height:420px;"></object>
+<object type="text/html" data="../fig_beta_schedules.html" style="width:100%;height:420px;"></object>
+<object type="text/html" data="../fig_alpha_bar_schedules.html" style="width:100%;height:420px;"></object>
 ```
 
 
