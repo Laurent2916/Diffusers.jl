@@ -14,6 +14,7 @@ makedocs(;
     edit_link="main",
     assets=String[]
   ),
+  linkcheck=true,
   pages=[
     "Home" => "index.md",
     "Schedulers" => "schedulers.md",
