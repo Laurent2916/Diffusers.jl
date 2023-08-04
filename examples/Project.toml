@@ -1,9 +1,12 @@
 [deps]
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
+DenoisingDiffusion = "32e9e46b-ad0f-4c80-b32d-4f6f824844ef"
+Diffusers = "90edb7a8-79d7-49b2-b6b1-9322c3fdead8"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 ImageShow = "4e3cecfd-b093-5904-9786-8bbb286a6a31"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 MLDatasets = "eb30cadb-4394-5ae3-aed4-317e484a6458"
+PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
-DenoisingDiffusion = "32e9e46b-ad0f-4c80-b32d-4f6f824844ef"

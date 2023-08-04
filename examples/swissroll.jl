@@ -1,7 +1,7 @@
 import Diffusers
 import Diffusers.Schedulers
 import Diffusers.Schedulers: DDPM
-import Diffusers.BetaSchedules: cosine_beta_schedule, rescale_zero_terminal_snr
+import Diffusers.BetaSchedules: linear_beta_schedule
 using Flux
 using Random
 using Plots
@@ -10,7 +10,7 @@ using DenoisingDiffusion
 using LaTeXStrings
 
 function make_spiral(n_samples::Integer=1000, t_min::Real=1.5π, t_max::Real=4.5π)
-  t = rand(n_samples) * (t_max - t_min) .+ t_min
+  t = rand(typeof(t_min), n_samples) * (t_max - t_min) .+ t_min
 
   x = t .* cos.(t)
   y = t .* sin.(t)
@@ -29,7 +29,7 @@ function normalize_neg_one_to_one(x)
 end
 
 n_points = 1000
-dataset = make_spiral(n_points, 1.5π, 4.5π)
+dataset = make_spiral(n_points, 1.5f0 * π, 4.5f0 * π)
 dataset = normalize_neg_one_to_one(dataset)
 scatter(dataset[1, :], dataset[2, :],
   alpha=0.5,
@@ -39,12 +39,12 @@ scatter(dataset[1, :], dataset[2, :],
 num_timesteps = 100
 scheduler = DDPM(
   Vector{Float32},
-  cosine_beta_schedule(num_timesteps)
+  linear_beta_schedule(num_timesteps)
 );
 
 data = dataset
 noise = randn(Float32, size(data))
-anim = @animate for t in cat(fill(0, 2), 1:num_timesteps, fill(num_timesteps, 2), dims=1)
+anim = @animate for t in cat(fill(0, 20), 1:num_timesteps, fill(num_timesteps, 20), dims=1)
   if t == 0
     scatter(noise[1, :], noise[2, :],
       alpha=0.3,
@@ -86,7 +86,7 @@ anim = @animate for t in cat(fill(0, 2), 1:num_timesteps, fill(num_timesteps, 2)
     ylims!(-3, 3)
   end
 end
-gif(anim, anim.dir * ".gif", fps=2)
+gif(anim, anim.dir * ".gif", fps=20)
 
 d_hid = 32
 model = ConditionalChain(
@@ -95,7 +95,8 @@ model = ConditionalChain(
     Dense(2, d_hid),
     Chain(
       SinusoidalPositionEmbedding(num_timesteps, d_hid),
-      Dense(d_hid, d_hid))
+      Dense(d_hid, d_hid)
+    )
   ),
   relu,
   Parallel(
@@ -103,7 +104,8 @@ model = ConditionalChain(
     Dense(d_hid, d_hid),
     Chain(
       SinusoidalPositionEmbedding(num_timesteps, d_hid),
-      Dense(d_hid, d_hid))
+      Dense(d_hid, d_hid)
+    )
   ),
   relu,
   Parallel(
@@ -111,7 +113,8 @@ model = ConditionalChain(
     Dense(d_hid, d_hid),
     Chain(
       SinusoidalPositionEmbedding(num_timesteps, d_hid),
-      Dense(d_hid, d_hid))
+      Dense(d_hid, d_hid)
+    )
   ),
   relu,
   Dense(d_hid, 2),
@@ -119,9 +122,9 @@ model = ConditionalChain(
 
 model(data, [5])
 
-num_epochs = 10000;
+num_epochs = 5000;
 loss = Flux.Losses.mse;
-opt = Flux.setup(Adam(0.001), model);
+opt = Flux.setup(AdamW(), model);
 dataloader = Flux.DataLoader(dataset; batchsize=32, shuffle=true);
 progress = Progress(num_epochs; desc="training", showspeed=true);
 for epoch = 1:num_epochs
@@ -154,7 +157,7 @@ anim = @animate for i in cat(fill(0, 20), 1:num_timesteps, fill(num_timesteps, 2
     p1 = scatter(dataset[1, :], dataset[2, :],
       alpha=0.01,
       aspectratio=:equal,
-      title=L"x_t",
+      title=L"\hat{x}_t",
       legend=false,
     )
     scatter!(sample_old[1, :], sample_old[2, :])
@@ -162,7 +165,7 @@ anim = @animate for i in cat(fill(0, 20), 1:num_timesteps, fill(num_timesteps, 2
     p2 = scatter(dataset[1, :], dataset[2, :],
       alpha=0.01,
       aspectratio=:equal,
-      title=L"x_0",
+      title=L"\hat{x}_0",
       legend=false,
     )
 
@@ -171,6 +174,7 @@ anim = @animate for i in cat(fill(0, 20), 1:num_timesteps, fill(num_timesteps, 2
     plot(p1, p2,
       layout=l,
       plot_title=latexstring("t = $(t_str)"),
+      size=(700, 400),
     )
     xlims!(-2, 2)
     ylims!(-2, 2)
@@ -180,7 +184,7 @@ anim = @animate for i in cat(fill(0, 20), 1:num_timesteps, fill(num_timesteps, 2
       alpha=0.01,
       aspectratio=:equal,
       legend=false,
-      title=L"x_t",
+      title=L"\hat{x}_t",
     )
     scatter!(sample[1, :], sample[2, :])
 
@@ -188,7 +192,7 @@ anim = @animate for i in cat(fill(0, 20), 1:num_timesteps, fill(num_timesteps, 2
       alpha=0.01,
       aspectratio=:equal,
       legend=false,
-      title=L"x_0",
+      title=L"\hat{x}_0",
     )
     scatter!(x_0[1, :], x_0[2, :])
 
@@ -197,6 +201,7 @@ anim = @animate for i in cat(fill(0, 20), 1:num_timesteps, fill(num_timesteps, 2
     plot(p1, p2,
       layout=l,
       plot_title=latexstring("t = $(t_str)"),
+      size=(700, 400),
     )
     xlims!(-2, 2)
     ylims!(-2, 2)
