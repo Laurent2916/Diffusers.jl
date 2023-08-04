@@ -20,3 +20,7 @@ makedocs(;
     "Beta Schedules" => "beta_schedules.md",
   ]
 )
+
+deploydocs(
+  repo="github.com/Laurent2916/Diffusers.jl.git",
+)
