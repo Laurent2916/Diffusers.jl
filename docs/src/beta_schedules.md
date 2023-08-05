@@ -18,9 +18,9 @@ T = 1000
 p1 = plot(
   [
     scatter(y=β_linear, name="Linear"),
-    scatter(y=β_scaled_linear, name="Scaled linear"),
+    scatter(y=β_scaled_linear, name="Scaled linear", visible="legendonly"),
     scatter(y=β_cosine, name="Cosine"),
-    scatter(y=β_sigmoid, name="Sigmoid"),
+    scatter(y=β_sigmoid, name="Sigmoid", visible="legendonly"),
   ],
   Layout(
     updatemenus=[
@@ -55,9 +55,9 @@ p1 = plot(
 p2 = plot(
   [
     scatter(y=α̅_linear, name="Linear"),
-    scatter(y=α̅_scaled_linear, name="Scaled linear"),
+    scatter(y=α̅_scaled_linear, name="Scaled linear", visible="legendonly"),
     scatter(y=α̅_cosine, name="Cosine"),
-    scatter(y=α̅_sigmoid, name="Sigmoid"),
+    scatter(y=α̅_sigmoid, name="Sigmoid", visible="legendonly"),
   ],
   Layout(
     updatemenus=[
