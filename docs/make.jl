@@ -1,6 +1,5 @@
 using Diffusers
 using Documenter
-using Plots
 
 DocMeta.setdocmeta!(Diffusers, :DocTestSetup, :(using Diffusers); recursive=true)
 
@@ -10,7 +9,7 @@ makedocs(;
   repo="https://github.com/Laurent2916/Diffusers.jl/blob/{commit}{path}#{line}",
   sitename="Diffusers.jl",
   format=Documenter.HTML(;
-    prettyurls=get(ENV, "CI", "false") == "true",
+    prettyurls=true,
     edit_link="main",
     assets=String[]
   ),

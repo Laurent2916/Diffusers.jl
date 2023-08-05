@@ -52,8 +52,6 @@ p1 = plot(
   )
 )
 
-savefig(p1, "fig_beta_schedules.html")
-
 p2 = plot(
   [
     scatter(y=α̅_linear, name="Linear"),
@@ -89,14 +87,15 @@ p2 = plot(
   )
 )
 
-savefig(p2, "fig_alpha_bar_schedules.html")
-
+mkpath("beta_schedules")
+savefig(p1, "beta_schedules/beta_schedules.html")
+savefig(p2, "beta_schedules/alpha_bar_schedules.html")
 nothing
 ```
 
 ```@raw html
-<object type="text/html" data="../fig_beta_schedules.html" style="width:100%;height:420px;"></object>
-<object type="text/html" data="../fig_alpha_bar_schedules.html" style="width:100%;height:420px;"></object>
+<object type="text/html" data="beta_schedules.html" style="width:100%;height:420px;"></object>
+<object type="text/html" data="alpha_bar_schedules.html" style="width:100%;height:420px;"></object>
 ```
 
 
