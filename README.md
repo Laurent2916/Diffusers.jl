@@ -1,6 +1,7 @@
 # Diffusers.jl
 
-[![GitHub](https://img.shields.io/github/license/Laurent2916/diffusers.jl)](https://github.com/Laurent2916/diffusers.jl/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/Laurent2916/diffusers.jl)](https://github.com/Laurent2916/diffusers.jl/blob/master/LICENSE)
+[![Dev Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://laurent2916.github.io/Diffusers.jl/dev/)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 [🤗 diffusers](https://github.com/huggingface/diffusers/), but in Julia (and with worse code) !
