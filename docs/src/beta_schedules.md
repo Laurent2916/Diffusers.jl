@@ -42,7 +42,7 @@ p1 = plot(
       ),
     ],
     xaxis=attr(
-      title=L"$t$",
+      title=L"t",
     ),
     yaxis=attr(
       type="log",
@@ -77,7 +77,7 @@ p2 = plot(
       ),
     ],
     xaxis=attr(
-      title=L"$t$",
+      title=L"t",
     ),
     yaxis=attr(
       title=L"\overline\alpha",
