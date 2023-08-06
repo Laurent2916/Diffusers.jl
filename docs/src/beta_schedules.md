@@ -41,7 +41,6 @@ p1 = plot(
         ]
       ),
     ],
-    title="Beta schedules",
     xaxis=attr(
       title=L"$t$",
     ),
@@ -77,7 +76,6 @@ p2 = plot(
         ],
       ),
     ],
-    title="Cumulative alpha schedules",
     xaxis=attr(
       title=L"$t$",
     ),
