@@ -2,8 +2,12 @@ module Schedulers
 
 include("DDPM.jl")
 
-export DDPM
+export
+  # Schedulers
+  DDPM,
 
-export add_noise, step
+  # Scheduler methods
+  add_noise,
+  step
 
 end # module Schedulers
