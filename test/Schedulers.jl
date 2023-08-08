@@ -32,7 +32,7 @@ using Test
   @testset "check `add_noise` terminal SNR" begin
     T = 10
     batch_size = 1
-    size = 1000
+    size = 2500
 
     # create a DDPM with a terminal SNR cosine beta schedule
     ddpm = Diffusers.DDPM(
