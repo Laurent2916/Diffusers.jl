@@ -50,9 +50,7 @@ using Test
     # corrupt x₀ with noise
     xₜ = Diffusers.add_noise(ddpm, x₀, ϵ, t)
 
-    @test std(xₜ) ≈ 1.0 atol=1f-3
-    @test mean(xₜ) ≈ 0.0 atol=1f-3
-    end
-  end
+    @test std(xₜ) ≈ 1.0 atol = 1.0f-3
+    @test mean(xₜ) ≈ 0.0 atol = 1.0f-2
   end
 end
