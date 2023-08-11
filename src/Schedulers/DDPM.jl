@@ -28,7 +28,7 @@ struct DDPM{V<:AbstractVector} <: Scheduler
   ⎷β̅₋₁::V # square root of β̅₋₁
 end
 
-function DDPM(V::DataType, β::AbstractVector)
+function DDPM(β::AbstractVector)
   T = length(β)
 
   α = 1 .- β
@@ -48,7 +48,7 @@ function DDPM(V::DataType, β::AbstractVector)
   ⎷α̅₋₁ = sqrt.(α̅₋₁)
   ⎷β̅₋₁ = sqrt.(β̅₋₁)
 
-  DDPM{V}(
+  DDPM{typeof(β)}(
     T,
     β,
     α,

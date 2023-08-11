@@ -38,7 +38,6 @@ scatter(dataset[1, :], dataset[2, :],
 
 num_timesteps = 100
 scheduler = DDPM(
-  Vector{Float32},
   linear_beta_schedule(num_timesteps)
 );
 

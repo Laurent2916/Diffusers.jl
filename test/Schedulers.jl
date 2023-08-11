@@ -10,7 +10,6 @@ using Test
 
     # create a DDPM with a cosine beta schedule
     ddpm = Diffusers.DDPM(
-      Vector{Float32},
       Diffusers.cosine_beta_schedule(T),
     )
 
@@ -36,7 +35,6 @@ using Test
 
     # create a DDPM with a terminal SNR cosine beta schedule
     ddpm = Diffusers.DDPM(
-      Vector{Float32},
       Diffusers.rescale_zero_terminal_snr(
         Diffusers.cosine_beta_schedule(T),
       ),
