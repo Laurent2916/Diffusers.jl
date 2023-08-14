@@ -16,7 +16,7 @@ Add noise to clean data using the forward diffusion process.
 ## Output
   * `xₜ::AbstractArray`: noisy data at the given timesteps
 """
-function add_noise(
+function forward(
   scheduler::Scheduler,
   x₀::AbstractArray,
   ϵ::AbstractArray,
@@ -36,7 +36,7 @@ Remove noise from model output using the backward diffusion process.
   * `xₜ₋₁::AbstractArray`: denoised sample at t=t-1
   * `x̂₀::AbstractArray`: denoised sample at t=0
 """
-function step(
+function reverse(
   scheduler::Scheduler,
   xₜ::AbstractArray,
   ϵᵧ::AbstractArray,

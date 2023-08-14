@@ -7,7 +7,7 @@ export
   DDPM,
 
   # Scheduler methods
-  add_noise,
-  step
+  forward,
+  reverse
 
 end # module Schedulers

@@ -15,7 +15,7 @@ using Test
     α̅_cosine = cumprod(1 .- β_cosine)
     α̅_sigmoid = cumprod(1 .- β_sigmoid)
 
-    # arxiv:2208.11970 (eq. 109)
+    # arxiv:2208.11970 Eq. 109
     SNR_linear = α̅_linear ./ (1 .- α̅_linear)
     SNR_scaled_linear = α̅_scaled_linear ./ (1 .- α̅_scaled_linear)
     SNR_cosine = α̅_cosine ./ (1 .- α̅_cosine)

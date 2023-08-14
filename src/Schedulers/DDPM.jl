@@ -65,7 +65,7 @@ function DDPM(β::AbstractVector)
   )
 end
 
-function add_noise(
+function forward(
   scheduler::DDPM,
   x₀::AbstractArray,
   ϵ::AbstractArray,
@@ -86,7 +86,7 @@ function add_noise(
   return xₜ
 end
 
-function step(
+function reverse(
   scheduler::DDPM,
   xₜ::AbstractArray,
   ϵᵧ::AbstractArray,
