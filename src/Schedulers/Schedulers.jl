@@ -8,6 +8,21 @@ export
 
   # Scheduler methods
   forward,
-  reverse
+  reverse,
+  get_velocity,
+
+  # VarianceType enum
+  VarianceType,
+  FIXED_SMALL,
+  FIXED_SMALL_LOG,
+  FIXED_LARGE,
+  FIXED_LARGE_LOG,
+  LEARNED,
+
+  # PredictionType enum
+  PredictionType,
+  EPSILON,
+  SAMPLE,
+  VELOCITY
 
 end # module Schedulers
