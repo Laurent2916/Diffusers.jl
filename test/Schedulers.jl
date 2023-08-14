@@ -1,5 +1,5 @@
 import Diffusers: reverse, forward, DDPM, cosine_beta_schedule
-using Statistics
+import Statistics: mean, std
 using Test
 
 @testset "Schedulers tests" begin
@@ -9,9 +9,7 @@ using Test
     size = 128
 
     # create a DDPM with a cosine beta schedule
-    ddpm = Diffusers.DDPM(
-      Diffusers.cosine_beta_schedule(T),
-    )
+    ddpm = DDPM(cosine_beta_schedule(T))
 
     # create some dummy data
     x₀ = ones(Float32, size, size, batch_size)
@@ -34,11 +32,7 @@ using Test
     size = 2500
 
     # create a DDPM with a terminal SNR cosine beta schedule
-    ddpm = Diffusers.DDPM(
-      Diffusers.rescale_zero_terminal_snr(
-        Diffusers.cosine_beta_schedule(T),
-      ),
-    )
+    ddpm = DDPM(cosine_beta_schedule(T))
 
     # create some dummy data
     x₀ = ones(Float32, size, size, batch_size)

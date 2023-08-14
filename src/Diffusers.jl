@@ -29,15 +29,15 @@ import .Schedulers:
   DDPM,
 
   # Scheduler methods
-  add_noise,
-  step
+  forward,
+  reverse
 
 export
   # Scheduler
   DDPM,
 
   # Scheduler methods
-  add_noise,
-  step
+  forward,
+  reverse
 
 end # module Diffusers
