@@ -8,7 +8,7 @@ function _extract(
 )
   new_size = tuple(
     fill(1, ndims(reference) - 1)...,
-    size(reference, ndims(reference))
+    size(target, 1)
   )
   return reshape(target, new_size)
 end
