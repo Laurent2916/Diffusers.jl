@@ -52,14 +52,14 @@ function DDPM(β::AbstractVector)
   α̅ = cumprod(α)
   β̅ = 1 .- α̅
 
-  α̅₋₁ = ShiftedArray(α̅, 1, default=1)
-  β̅₋₁ = 1 .- α̅₋₁
+  α̅₋₁ = ShiftedArray(α̅, 1, default=1.0)
+  β̅₋₁ = ShiftedArray(β̅, 1, default=0.0)
 
   ⎷α̅ = sqrt.(α̅)
   ⎷β̅ = sqrt.(β̅)
 
-  ⎷α̅₋₁ = sqrt.(α̅₋₁)
-  ⎷β̅₋₁ = sqrt.(β̅₋₁)
+  ⎷α̅₋₁ = ShiftedArray(⎷α̅, 1, default=1.0)
+  ⎷β̅₋₁ = ShiftedArray(⎷β̅, 1, default=0.0)
 
   DDPM{typeof(β)}(
     T,
