@@ -9,11 +9,13 @@ T = 1000
 β_scaled_linear = scaled_linear_beta_schedule(T)
 β_cosine = cosine_beta_schedule(T)
 β_sigmoid = sigmoid_beta_schedule(T)
+β_exponential = exponential_beta_schedule(T)
 
 α̅_linear = cumprod(1 .- β_linear)
 α̅_scaled_linear = cumprod(1 .- β_scaled_linear)
 α̅_cosine = cumprod(1 .- β_cosine)
 α̅_sigmoid = cumprod(1 .- β_sigmoid)
+α̅_exponential = cumprod(1 .- β_exponential)
 
 p1 = plot(
   [
@@ -21,6 +23,7 @@ p1 = plot(
     scatter(y=β_scaled_linear, name="Scaled linear", visible="legendonly"),
     scatter(y=β_cosine, name="Cosine"),
     scatter(y=β_sigmoid, name="Sigmoid", visible="legendonly"),
+    scatter(y=β_exponential, name="Exponential", visible="legendonly"),
   ],
   Layout(
     updatemenus=[
@@ -57,6 +60,7 @@ p2 = plot(
     scatter(y=α̅_scaled_linear, name="Scaled linear", visible="legendonly"),
     scatter(y=α̅_cosine, name="Cosine"),
     scatter(y=α̅_sigmoid, name="Sigmoid", visible="legendonly"),
+    scatter(y=α̅_exponential, name="Exponential", visible="legendonly"),
   ],
   Layout(
     updatemenus=[
@@ -95,7 +99,6 @@ nothing
 <object type="text/html" data="beta_schedules.html" style="width:100%;height:420px;"></object>
 <object type="text/html" data="alpha_bar_schedules.html" style="width:100%;height:420px;"></object>
 ```
-
 
 ```@autodocs
 Modules = [Diffusers.BetaSchedules]

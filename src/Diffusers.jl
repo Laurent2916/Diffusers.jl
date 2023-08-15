@@ -8,6 +8,7 @@ import .BetaSchedules:
   scaled_linear_beta_schedule,
   cosine_beta_schedule,
   sigmoid_beta_schedule,
+  exponential_beta_schedule,
 
   # Beta Schedule utils
   rescale_zero_terminal_snr
@@ -18,6 +19,7 @@ export
   scaled_linear_beta_schedule,
   cosine_beta_schedule,
   sigmoid_beta_schedule,
+  exponential_beta_schedule,
 
   # Beta Schedule utils
   rescale_zero_terminal_snr

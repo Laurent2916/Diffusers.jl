@@ -32,13 +32,13 @@ struct DDPM{V<:AbstractVector} <: Scheduler
   β̅::V # 1 - α̅ (≠ cumprod(β))
 
   α̅₋₁::V # right-shifted α̅
-  β̅₋₁::V # 1 - α̅₋₁
+  β̅₋₁::V # right-shifted β̅
 
   ⎷α̅::V # square root of α̅
   ⎷β̅::V # square root of β̅
 
-  ⎷α̅₋₁::V # square root of α̅₋₁
-  ⎷β̅₋₁::V # square root of β̅₋₁
+  ⎷α̅₋₁::V # right-shifted ⎷α̅
+  ⎷β̅₋₁::V # right-shifted ⎷β̅
 end
 
 function DDPM(β::AbstractVector)
