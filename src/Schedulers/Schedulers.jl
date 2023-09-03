@@ -1,10 +1,12 @@
 module Schedulers
 
 include("DDPM.jl")
+include("DDIM.jl")
 
 export
   # Schedulers
   DDPM,
+  DDIM,
 
   # Scheduler methods
   forward,

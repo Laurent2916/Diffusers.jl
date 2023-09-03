@@ -29,6 +29,7 @@ include("Schedulers/Schedulers.jl")
 import .Schedulers:
   # Scheduler
   DDPM,
+  DDIM,
 
   # Scheduler methods
   forward,
@@ -52,6 +53,7 @@ import .Schedulers:
 export
   # Scheduler
   DDPM,
+  DDIM,
 
   # Scheduler methods
   forward,
