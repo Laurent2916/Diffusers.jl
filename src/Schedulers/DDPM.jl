@@ -94,8 +94,9 @@ function reverse(
   xₜ::AbstractArray,
   ϵᵧ::AbstractArray,
   t::AbstractArray,
+  ;
   prediction_type::PredictionType=EPSILON,
-  variance_type::VarianceType=FIXED_SMALL,
+  variance_type::VarianceType=FIXED_SMALL
 )
   # retreive scheduler variables at timesteps t
   βₜ = _extract(scheduler.β[t], xₜ)

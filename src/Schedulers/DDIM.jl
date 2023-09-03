@@ -94,39 +94,23 @@ function reverse(
   xₜ::AbstractArray,
   ϵᵧ::AbstractArray,
   t::AbstractArray,
+  ;
   η::Real=0.0f0,
-  prediction_type::PredictionType=EPSILON,
+  prediction_type::PredictionType=EPSILON
 )
   Δₜ = 1
-  α̅ = _extract(scheduler.α̅, xₜ)
   α̅₋ₚ = ShiftedArray(scheduler.α̅, Δₜ, default=1.0f0)
-  α̅ₜ = _extract(α̅[t], xₜ)
   α̅ₜ₋ₚ = _extract(α̅₋ₚ[t], xₜ)
-  β̅ = _extract(scheduler.β̅, xₜ)
-  β̅₋ₚ = ShiftedArray(scheduler.β̅, Δₜ, default=0.0f0)
-  β̅ₜ = _extract(β̅[t], xₜ)
-  β̅ₜ₋ₚ = _extract(β̅₋ₚ[t], xₜ)
-
-  println("α̅ₜ = ", α̅ₜ)
-  println("α̅ₜ₋ₚ = ", α̅ₜ₋ₚ)
 
   # compute x₀ (approximation)
-  x̂₀ = get_prediction(scheduler, prediction_type, xₜ, ϵᵧ, t)
-
-  # clip between -1 and 1
-  x̂₀ = clamp.(x̂₀, -3, 3)
+  x̂₀, ϵ̂ = get_prediction(scheduler, prediction_type, xₜ, ϵᵧ, t)
 
   # compute σ (exact)
-  σ²ₜ = (β̅ₜ₋ₚ ./ β̅ₜ) .* (1 .- α̅ₜ ./ α̅ₜ₋ₚ)
-  println("β̅ₜ₋ₚ = ", β̅ₜ₋ₚ)
-  println("β̅ₜ = ", β̅ₜ)
-  println("α̅ₜ = ", α̅ₜ)
-  println("α̅ₜ₋ₚ = ", α̅ₜ₋ₚ)
-  println("σ²ₜ = ", σ²ₜ)
+  σ²ₜ = get_variance(scheduler, xₜ, t, Δₜ)
   σₜ = η * sqrt.(σ²ₜ)
 
   # compute direction
-  Δₓ = sqrt.(1 .- α̅ₜ₋ₚ .- σₜ^2) .* ϵᵧ
+  Δₓ = sqrt.(1 .- α̅ₜ₋ₚ .- σₜ .^ 2) .* ϵ̂
 
   # sample xₜ₋ₚ
   ϵ = randn(Float32, size(xₜ))
@@ -160,18 +144,37 @@ function get_prediction(
   ⎷β̅ₜ = _extract(scheduler.⎷β̅[t], xₜ)
 
   if prediction_type == EPSILON
-    # arxiv:2006.11239 Eq. 15
-    # arxiv:2208.11970 Eq. 115
     x̂₀ = (xₜ - ⎷β̅ₜ .* ϵᵧ) ./ ⎷α̅ₜ
-    # elseif prediction_type == SAMPLE
-    #   # arxiv:2208.11970 Eq. 99
-    #   x̂₀ = ϵᵧ
-    # elseif prediction_type == VELOCITY
-    #   # arxiv:2202.00512 Eq. 31
-    #   x̂₀ = ⎷α̅ₜ .* xₜ - ⎷β̅ₜ .* ϵᵧ
+    ϵ̂ = ϵᵧ
+  elseif prediction_type == SAMPLE
+    x̂₀ = ϵᵧ
+    ϵ̂ = (xₜ - ⎷α̅ₜ .* x̂₀) ./ ⎷β̅ₜ
+  elseif prediction_type == VELOCITY
+    x̂₀ = ⎷α̅ₜ .* xₜ .- ⎷β̅ₜ .* ϵᵧ
+    ϵ̂ = ⎷α̅ₜ .* ϵᵧ .+ ⎷β̅ₜ .* xₜ
   else
     throw("unimplemented prediction type")
   end
 
-  return x̂₀
+  return x̂₀, ϵ̂
+end
+
+function get_variance(
+  scheduler::DDIM,
+  xₜ::AbstractArray,
+  t::AbstractArray,
+  Δₜ::Integer,
+)
+  α̅ = _extract(scheduler.α̅, xₜ)
+  α̅₋ₚ = ShiftedArray(scheduler.α̅, Δₜ, default=1.0f0)
+  α̅ₜ = _extract(α̅[t], xₜ)
+  α̅ₜ₋ₚ = _extract(α̅₋ₚ[t], xₜ)
+  β̅ = _extract(scheduler.β̅, xₜ)
+  β̅₋ₚ = ShiftedArray(scheduler.β̅, Δₜ, default=0.0f0)
+  β̅ₜ = _extract(β̅[t], xₜ)
+  β̅ₜ₋ₚ = _extract(β̅₋ₚ[t], xₜ)
+
+  σ²ₜ = (β̅ₜ₋ₚ ./ β̅ₜ) .* (1 .- α̅ₜ ./ α̅ₜ₋ₚ)
+
+  return σ²ₜ
 end
