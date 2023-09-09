@@ -8,7 +8,7 @@ NNlib = "872c559c-99b0-510c-b3b7-b6c96a88d5cd"
 ShiftedArrays = "1277b4bf-5013-50f5-be3d-901d8477a67a"
 
 [compat]
-NNlib = "0.9"
+NNlib = "0"
 ShiftedArrays = "2.0"
 julia = "1"
 
