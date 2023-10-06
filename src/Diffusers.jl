@@ -27,7 +27,7 @@ export
 include("Schedulers/Schedulers.jl")
 
 import .Schedulers:
-  # Scheduler
+  # Schedulers
   DDPM,
   DDIM,
 
@@ -51,7 +51,7 @@ import .Schedulers:
   VELOCITY
 
 export
-  # Scheduler
+  # Schedulers
   DDPM,
   DDIM,
 

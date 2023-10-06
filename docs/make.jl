@@ -1,6 +1,9 @@
 using Diffusers
 using Documenter
 using DocumenterCitations
+using Literate
+
+Literate.markdown(joinpath(@__DIR__, "..", "examples", "beta_schedulers_comparison.jl"), joinpath(@__DIR__, "src", "generated"))
 
 DocMeta.setdocmeta!(Diffusers, :DocTestSetup, :(using Diffusers); recursive=true)
 bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
@@ -18,8 +21,13 @@ makedocs(bib;
   linkcheck=true,
   pages=[
     "Home" => "index.md",
-    "Schedulers" => "schedulers.md",
-    "Beta Schedules" => "beta_schedules.md",
+    "API" => [
+      "Schedulers" => "schedulers.md",
+      "Beta Schedules" => "beta_schedules.md",
+    ],
+    "Examples" => [
+      "Beta Schedules Comparison" => "generated/beta_schedulers_comparison.md",
+    ],
     "References" => "references.md",
   ]
 )
