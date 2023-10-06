@@ -1,5 +1,6 @@
 module Schedulers
 
+include("Abstract.jl")
 include("DDPM.jl")
 include("DDIM.jl")
 

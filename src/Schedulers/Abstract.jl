@@ -1,11 +1,11 @@
+@enum VarianceType FIXED_SMALL FIXED_SMALL_LOG FIXED_LARGE FIXED_LARGE_LOG LEARNED
+@enum PredictionType EPSILON SAMPLE VELOCITY
+
 """
 Abstract type for schedulers.
-
 """
 abstract type Scheduler end
 
-@enum VarianceType FIXED_SMALL FIXED_SMALL_LOG FIXED_LARGE FIXED_LARGE_LOG LEARNED
-@enum PredictionType EPSILON SAMPLE VELOCITY
 
 """
 Add noise to clean data using the forward diffusion process.
@@ -59,7 +59,7 @@ Compute the velocity of the diffusion process.
   * `vₜ::AbstractArray`: velocity at the given timesteps
 
 ## References
-  * [[2202.00512] Progressive Distillation for Fast Sampling of Diffusion Models](https://arxiv.org/abs/2202.00512) (Ann. D)
+  [salimans2022progressive; Ann. D](@cite)
 """
 function get_velocity(
   scheduler::Scheduler,

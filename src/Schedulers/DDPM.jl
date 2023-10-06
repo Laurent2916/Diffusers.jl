@@ -1,5 +1,3 @@
-include("Abstract.jl")
-
 using ShiftedArrays
 
 function _extract(
