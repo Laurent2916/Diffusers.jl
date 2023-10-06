@@ -3,6 +3,10 @@ import NNlib: sigmoid
 """
 Sigmoid beta schedule.
 
+```math
+\\beta_t = \\sigma \\left( 12 \\frac{t - 1}{T - 1} - 6 \\right) ( \\beta_{-1} - \\beta_1 ) + \\beta_1
+```
+
 ## Input
   * `T::Int`: number of timesteps
   * `β₁::Real=1.0f-4`: initial value of β
@@ -12,8 +16,8 @@ Sigmoid beta schedule.
   * `β::Vector{Real}`: βₜ values at each timestep t
 
 ## References
-  * [[2203.02923] GeoDiff: a Geometric Diffusion Model for Molecular Conformation Generation](https://arxiv.org/abs/2203.02923)
-  * [github.com:MinkaiXu/GeoDiff](https://github.com/MinkaiXu/GeoDiff/blob/ea0ca48045a2f7abfccd7f0df449e45eb6eae638/models/epsnet/diffusion.py#L57)
+  * [xu2022geodiff; GeoDiff: a Geometric Diffusion Model for Molecular Conformation Generation](@cite)
+  * [github.com:MinkaiXu/GeoDiff/models/epsnet/diffusion.py](https://github.com/MinkaiXu/GeoDiff/blob/ea0ca48045a2f7abfccd7f0df449e45eb6eae638/models/epsnet/diffusion.py#L57)
 """
 function sigmoid_beta_schedule(T::Integer, β₁::Real=1.0f-4, β₋₁::Real=2.0f-2)
   x = range(start=-6, stop=6, length=T)

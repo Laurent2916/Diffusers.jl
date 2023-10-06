@@ -1,14 +1,16 @@
 """
 Exponential beta schedule.
 
+```math
+\\overline{\\alpha}_t = \\exp \\left( \\frac{-12 t}{T} \\right)
+```
+
 ## Input
   * `T::Int`: number of timesteps
   * `βₘₐₓ::Real=0.999f0`: maximum value of β
 
 ## Output
   * `β::Vector{Real}`: βₜ values at each timestep t
-
-## References
 """
 function exponential_beta_schedule(T::Integer, βₘₐₓ::Real=0.999f0)
   α̅(t) = exp(-12 * t / T)
